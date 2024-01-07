@@ -50,10 +50,12 @@ function startTimer(e) {
   timerInterval && clearInterval(timerInterval);
   renderTime(timeLeft);
   refs.startButton.disabled = true;
+  refs.input.disabled = true;
 
   timerInterval = setInterval(() => {
     if (timeLeft < 1000) {
       localStorage.removeItem(STORAGE_KEY);
+      refs.input.disabled = false;
       return clearInterval(timerInterval);
     }
     timeLeft -= 1000;
