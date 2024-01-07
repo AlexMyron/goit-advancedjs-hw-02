@@ -5,8 +5,9 @@ import 'izitoast/dist/css/iziToast.min.css';
 
 import { convertMs, addLeadingZero } from './tools';
 
+const STORAGE_KEY = 'timer-data';
 const currentTime = new Date().getTime();
-const savedTimerData = localStorage.getItem('timer-data');
+const savedTimerData = localStorage.getItem(STORAGE_KEY);
 let alarmTime = 0;
 let timerInterval;
 
@@ -32,8 +33,8 @@ const options = {
         title: 'info: ',
         message: 'Please choose a date in the future',
         theme: 'dark',
-        close: true,
-        closeOnEscape: true,
+        close: false,
+        position: 'topRight',
         closeOnClick: true,
       });
 
@@ -45,13 +46,16 @@ function startTimer(e) {
   const finalTime = savedTimerData && !e ? Number(savedTimerData) : alarmTime;
   let timeLeft = finalTime - currentTime;
 
-  e && localStorage.setItem('timer-data', alarmTime);
+  e && localStorage.setItem(STORAGE_KEY, alarmTime);
   timerInterval && clearInterval(timerInterval);
   renderTime(timeLeft);
   refs.startButton.disabled = true;
 
   timerInterval = setInterval(() => {
-    if (timeLeft < 1000) return clearInterval(timerInterval);
+    if (timeLeft < 1000) {
+      localStorage.removeItem(STORAGE_KEY);
+      return clearInterval(timerInterval);
+    }
     timeLeft -= 1000;
     renderTime(timeLeft);
   }, 1000);
@@ -70,4 +74,4 @@ flatpickr(refs.input, options);
 refs.startButton.addEventListener('click', startTimer);
 
 if (savedTimerData && savedTimerData > currentTime) startTimer();
-else localStorage.removeItem('timer-data');
+else localStorage.removeItem(STORAGE_KEY);
