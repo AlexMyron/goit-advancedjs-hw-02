@@ -69,4 +69,5 @@ function renderTime(time) {
 flatpickr(refs.input, options);
 refs.startButton.addEventListener('click', startTimer);
 
-if (savedTimerData) startTimer();
+if (savedTimerData && savedTimerData > currentTime) startTimer();
+else localStorage.removeItem('timer-data');
